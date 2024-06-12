@@ -1,0 +1,53 @@
+
+        .top-menu {
+            background-color: #333;
+            color: white;
+            text-align: left;
+            padding: 10px;           
+            justify-content: space-between;
+            
+            width: 100%;
+        }
+
+        .top-menu a{
+        color: white;
+        margin-right: 10px
+        }   
+
+        .top-menu a:hover {
+            color: blue;
+            cursor: pointer;
+               
+        }
+
+        .conteudo{    
+            display: flex;          
+        }
+            
+        .side-menu {
+            width: fit-content;
+            padding-right: 10px;
+            margin-right: 10px;
+            background-color: #f1f1f1;            
+            font-size: medium;            
+        }
+
+        .side-menu a:hover {
+            color: blue;
+            cursor: pointer;            
+        }
+        
+        .topicos {
+         padding-left: 15px;
+        }
+
+        .conteudo-texto {
+        width: fit-content;
+        overflow: auto;
+        }
+       
+        .imagens{
+       width: 40%;       
+       }
+
+  
