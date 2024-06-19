@@ -10,8 +10,8 @@
     <canvas id="meuGrafico" style="border: 1px solid black"></canvas>
     <input type="range" min="0" max="20" value="0" onchange="updateGrafico()" id="Attack"><input type="text" id="attackValue"><br>
     <input type="range" min="0" max="20" value="20" onchange="updateGrafico()" id="Decay"><input type="text" id="decayValue"><br>
-    <input type="range" min="20" max="40" value="40" onchange="updateGrafico()" id="Sustain"><input type="text" id="sustainValue"><br>
-    <input type="range" min="40" max="60" value="60" onchange="updateGrafico()" id="Release"><input type="text" id="releaseValue"><br>    
+    <input type="range" min="0" max="127" value="127" onchange="updateGrafico()" id="Sustain"><input type="text" id="sustainValue"><br>
+    <input type="range" min="60" max="80" value="60" onchange="updateGrafico()" id="Release"><input type="text" id="releaseValue"><br>    
     <script>
         
       
@@ -24,7 +24,7 @@
                     data: [
                         { x: 0, y: 0 },
                         { x: 20, y: 127 },
-                        { x: 20, y: 0 },
+                        { x: 40, y: 127 },
                         { x: 40, y: 0 },
                         { x: 80, y: 0 }
                     ],
@@ -73,8 +73,8 @@
             meuGrafico.data.datasets[0].data = [
                         { x: 0, y: 0 },
                         { x: attack, y: 127 },
-                        { x: decay, y: 0 },
-                        { x: 0, y: 0 },
+                        { x: parseInt(decay)+parseInt(attack), y: sustain },
+                        { x: release, y: sustain },
                         { x: 80, y: 0 }
                     ]
             meuGrafico.update();
