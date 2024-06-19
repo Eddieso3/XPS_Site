@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gráfico de Linhas com Chart.js</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <canvas id="meuGrafico" style="border: 1px solid black"></canvas>
+    <input type="range" min="0" max="20" value="0" onchange="updateGrafico()" id="Attack"><input type="text" id="attackValue"><br>
+    <input type="range" min="0" max="20" value="20" onchange="updateGrafico()" id="Decay"><input type="text" id="decayValue"><br>
+    <input type="range" min="20" max="40" value="40" onchange="updateGrafico()" id="Sustain"><input type="text" id="sustainValue"><br>
+    <input type="range" min="40" max="60" value="60" onchange="updateGrafico()" id="Release"><input type="text" id="releaseValue"><br>    
+    <script>
+        
+      
+        var ctx = document.getElementById('meuGrafico').getContext('2d');
+        var meuGrafico = new Chart(ctx, {
+            type: 'line', // tipo do gráfico
+            data: {
+                labels: ['Attack', 'Sustain', "Decay", 'Release', ''], // etiquetas
+                datasets: [{                    
+                    data: [
+                        { x: 0, y: 0 },
+                        { x: 20, y: 127 },
+                        { x: 20, y: 0 },
+                        { x: 40, y: 0 },
+                        { x: 80, y: 0 }
+                    ],
+                    backgroundColor: 'rgba(75, 192, 192, 0.6)', // cor de preenchimento
+                    borderColor: 'rgba(75, 192, 192, 1)', // cor da linha
+                    borderWidth: 1,
+                    lineTension: 0, // tensão da linha
+                    fill: true // preenchimento
+                }]
+            },
+            options: {
+                plugins: {
+                    legend: {
+                        display: false // oculta a legenda
+                    }
+                },
+                scales: {
+                    x: {
+                        type: 'linear',
+                        position: 'bottom',
+                        min: 0,
+                        max: 80,
+                        display: false
+                    },
+                    y: {
+                        display: false,
+                        type: 'linear',
+                        position: 'left',
+                        min: 0,
+                        max: 130
+                    }
+                }
+            }
+        });
+
+        function updateGrafico() {
+            var attack = document.getElementById('Attack').value;
+            var decay = document.getElementById('Decay').value;
+            var sustain = document.getElementById('Sustain').value;
+            var release = document.getElementById('Release').value;
+            document.getElementById('attackValue').value = attack;
+            document.getElementById('decayValue').value = parseInt(decay)+parseInt(attack);
+            document.getElementById('sustainValue').value = sustain;
+            document.getElementById('releaseValue').value = release;
+
+            meuGrafico.data.datasets[0].data = [
+                        { x: 0, y: 0 },
+                        { x: attack, y: 127 },
+                        { x: decay, y: 0 },
+                        { x: 0, y: 0 },
+                        { x: 80, y: 0 }
+                    ]
+            meuGrafico.update();
+        }
+    </script>
+</body>
+</html>
