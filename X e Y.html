@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gráfico Interativo X e Y</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .container {
+            max-width: 800px;
+            margin: 50px auto;            
+        }
+        canvas {
+            border-radius: 5px;
+            background-color: #484747;
+        }
+        .chart-container {
+            border: 2px solid white; /* Cor e largura da borda */
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .value-display {
+            margin: 10px 0;
+            color: white; /* Cor do texto */
+        }
+        .value-display input {
+            width: 60px;
+            text-align: center;
+            background-color: #484747; /* Cor de fundo do input */
+            color: white; /* Cor do texto do input */
+            border: none; /* Remover borda do input */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Gráfico Interativo</h2>
+        <div class="chart-container">
+            <canvas id="meuGrafico"></canvas>
+        </div>
+        <div class="value-display">
+            X: <input type="text" id="xValue" readonly>
+            Y: <input type="text" id="yValue" readonly>
+        </div>
+    </div>
+    
+    <script>
+        var ctx = document.getElementById('meuGrafico').getContext('2d');
+
+        // Ponto inicial no gráfico
+        var point = { x: 63, y: 63 };
+
+        // Variáveis para controle de arraste e atualização
+        var isDragging = false;
+        var isAnimating = false;
+
+        // Criação do gráfico com Chart.js
+        var meuGrafico = new Chart(ctx, {
+            type: 'scatter',
+            data: {
+                datasets: [{
+                    label: 'Ponto Interativo',
+                    data: [point],
+                    backgroundColor: 'rgba(255, 100, 100, 0.2)', // Cor de fundo do ponto
+                    borderColor: 'rgba(255, 0, 0, 1)', // Cor da borda do ponto
+                    borderWidth: 2, // Largura da borda do ponto
+                    pointRadius: 10,
+                    pointHoverRadius: 10,
+                    showLine: true,
+                    fill: true,
+                }]
+            },
+            options: {
+                scales: {
+                    x: {
+                        type: 'linear',
+                        position: 'bottom',
+                        min: 0,
+                        max: 127,
+                        title: {
+                            display: true,
+                            text: 'Resonance',
+                            color: 'white',
+                        },
+                        grid: {
+                            display: false,
+                        },
+                        ticks: {
+                            display: false,
+                        }
+                    },
+                    y: {
+                        type: 'linear',
+                        min: 0,
+                        max: 127,
+                        title: {
+                            display: true,
+                            text: 'Cutoff',
+                            color: 'white',
+                        },
+                        grid: {
+                            display: false,
+                        },
+                        ticks: {
+                            display: false,
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        enabled: false
+                    },
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+
+        // Função para atualizar o gráfico
+        function updateGrafico() {
+            if (isAnimating) return;
+
+            isAnimating = true;
+
+            requestAnimationFrame(function() {
+                meuGrafico.update();
+                isAnimating = false;
+            });
+        }
+
+        // Função para obter posição do evento de toque
+        function getTouchPosition(event) {
+            var rect = event.target.getBoundingClientRect();
+            var x = event.touches[0].clientX - rect.left;
+            var y = event.touches[0].clientY - rect.top;
+
+            return { x: x, y: y };
+        }
+
+        // Atualizar os valores nas caixas de texto
+        function updateValueDisplay(x, y) {
+            document.getElementById('xValue').value = x;
+            document.getElementById('yValue').value = y;
+        }
+
+        // Evento para capturar o início do arraste por toque
+        function startDrag(event) {
+            var position = getTouchPosition(event);
+            var x = position.x;
+            var y = position.y;
+
+            // Mover o ponto para a posição do toque
+            var xValue = Math.min(Math.max(1, meuGrafico.scales.x.getValueForPixel(x)), 127);
+            var yValue = Math.min(Math.max(1, meuGrafico.scales.y.getValueForPixel(y)), 127);
+
+            point.x = Math.round(xValue);
+            point.y = Math.round(yValue);
+
+            updateValueDisplay(point.x, point.y);
+            updateGrafico();
+
+            isDragging = true;
+        }
+
+        // Evento para mover o ponto durante o arraste por toque
+        function moveDrag(event) {
+            if (!isDragging) return;
+
+            var position = getTouchPosition(event);
+            var x = position.x;
+            var y = position.y;
+
+            var xValue = Math.min(Math.max(1, meuGrafico.scales.x.getValueForPixel(x)), 127);
+            var yValue = Math.min(Math.max(1, meuGrafico.scales.y.getValueForPixel(y)), 127);
+
+            point.x = Math.round(xValue);
+            point.y = Math.round(yValue);
+
+            updateValueDisplay(point.x, point.y);
+            updateGrafico();
+        }
+
+        // Evento para finalizar o arraste por toque
+        function endDrag() {
+            isDragging = false;
+        }
+
+        // Adicionar eventos de toque
+        document.getElementById('meuGrafico').addEventListener('touchstart', function(event) {
+            startDrag(event);
+            event.preventDefault(); // Evitar o comportamento padrão de toque
+        });
+        document.getElementById('meuGrafico').addEventListener('touchmove', function(event) {
+            moveDrag(event);
+            event.preventDefault(); // Evitar o comportamento padrão de toque
+        });
+        document.getElementById('meuGrafico').addEventListener('touchend', endDrag);
+        document.getElementById('meuGrafico').addEventListener('touchcancel', endDrag);
+
+        // Inicializar a exibição dos valores
+        updateValueDisplay(point.x, point.y);
+    </script>
+</body>
+</html>

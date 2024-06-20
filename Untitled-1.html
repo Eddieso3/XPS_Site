@@ -4,17 +4,68 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gráfico de Linhas com Chart.js</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="text/javascript" src="https://gc.kes.v2.scr.kaspersky-labs.com/7EA5E9BB-55E1-4C31-9C21-4943DDFED2E4/main.js?attr=oqNU7NLoAXxqMyO_oGeAcZD0_DZhFDfORdBuaOco_99TwyhyHFd8k2M7rHX8foFNLVJRZx4ElQbrAiQdnTjDnUdyRjaGwRTVGiRflT9lyJ28PxZxrnKEu47LC9Un-hlB04oKDNFe8uPZW_Kh14xJBg" charset="UTF-8"></script><script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .sliders {
+            display: flex;
+            flex-direction: column;                        
+            justify-content: center;
+            align-items: center;
+            padding-right: 30px;
+            
+        }
+
+        .sliderContent {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+        }
+
+        .slider {
+            appearance: none;
+            width: 150px;            
+        }
+
+        .slider::-webkit-slider-runnable-track {
+            border: 1px solid black;
+            border-radius: 25px;
+        }
+
+        .valueSlider {
+            width: 25px;
+            border: none;
+        }
+    </style>
 </head>
 <body>
-    <canvas id="meuGrafico" style="border: 1px solid black"></canvas>
-    <input type="range" min="0" max="20" value="0" onchange="updateGrafico()" id="Attack"><input type="text" id="attackValue"><br>
-    <input type="range" min="0" max="20" value="20" onchange="updateGrafico()" id="Decay"><input type="text" id="decayValue"><br>
-    <input type="range" min="0" max="127" value="127" onchange="updateGrafico()" id="Sustain"><input type="text" id="sustainValue"><br>
-    <input type="range" min="60" max="80" value="60" onchange="updateGrafico()" id="Release"><input type="text" id="releaseValue"><br>    
+    <div style="width: 100%; display: flex; justify-content: center; align-items: center;">
+        <div class="sliders">
+            <div class="sliderContent">
+                <label for="Attack">A</label>                
+                    <input class="slider" type="range" min="0" max="20" value="0" oninput="updateGrafico()" id="Attack">                
+                <input type="text" class="valueSlider" id="AttackValue" value="0"></input>
+            </div>   
+            <div class="sliderContent">
+                <label for="Decay">D</label>    
+                <input class="slider" type="range" min="0" max="20" value="20" oninput="updateGrafico()" id="Decay">
+                <input type="text" class="valueSlider" id="DecayValue" value="127"></input>
+            </div>  
+            <div class="sliderContent">
+                <label for="Sustain">S</label>                
+                <input class="slider" type="range" min="0" max="127" value="127" oninput="updateGrafico()" id="Sustain">
+                <input type="text" class="valueSlider" id="SustainValue" value="127"></input>
+            </div>  
+            <div class="sliderContent">
+                <label for="Release">R</label>                
+                <input class="slider" style = "rotate: 180deg;" type="range" min="60" max="80" value="60" oninput="updateGrafico()" id="Release">
+                <input type="text" class="valueSlider" id="ReleaseValue" value="127"></input>                
+            </div>
+        </div>
+        <div style="width: 50%;">
+            <canvas id="meuGrafico" style="border: 1px solid black;"></canvas>
+        </div>
+    </div>
     <script>
-        
-      
         var ctx = document.getElementById('meuGrafico').getContext('2d');
         var meuGrafico = new Chart(ctx, {
             type: 'line', // tipo do gráfico
@@ -25,14 +76,15 @@
                         { x: 0, y: 0 },
                         { x: 20, y: 127 },
                         { x: 40, y: 127 },
-                        { x: 40, y: 0 },
+                        { x: 40, y: 127 },
                         { x: 80, y: 0 }
                     ],
-                    backgroundColor: 'rgba(75, 192, 192, 0.6)', // cor de preenchimento
-                    borderColor: 'rgba(75, 192, 192, 1)', // cor da linha
+                    backgroundColor: 'rgba(0, 150, 255, 0.2)', // cor de preenchimento
+                    borderColor: 'rgba(0, 190, 200, 1)', // cor da linha
                     borderWidth: 1,
-                    lineTension: 0, // tensão da linha
-                    fill: true // preenchimento
+                    lineTension: 0, 
+                    fill: true, 
+                    pointRadius: 0 
                 }]
             },
             options: {
@@ -64,12 +116,13 @@
             var attack = document.getElementById('Attack').value;
             var decay = document.getElementById('Decay').value;
             var sustain = document.getElementById('Sustain').value;
-            var release = document.getElementById('Release').value;
-            document.getElementById('attackValue').value = attack;
-            document.getElementById('decayValue').value = parseInt(decay)+parseInt(attack);
-            document.getElementById('sustainValue').value = sustain;
-            document.getElementById('releaseValue').value = release;
-
+            var release = parseInt(document.getElementById('Release').value);
+            
+            document.getElementById('ReleaseValue').value = release;
+            document.getElementById('AttackValue').value = attack;
+            document.getElementById('DecayValue').value = decay;
+            document.getElementById('SustainValue').value = sustain;
+            
             meuGrafico.data.datasets[0].data = [
                         { x: 0, y: 0 },
                         { x: attack, y: 127 },
